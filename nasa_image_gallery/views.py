@@ -6,6 +6,8 @@ from .layers.services import services_nasa_image_gallery
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from.layers.services.services_nasa_image_gallery import getAllImages
+from googletrans import Translator
+from django.contrib.auth import login, logout, authenticate
 
 # función que invoca al template del índice de la aplicación.
 def index_page(request):
@@ -35,8 +37,10 @@ def search(request):
         images = getAllImages('space')
         return render(request, 'home.html', {'images': images, 'favourites': favourite_list})
     else:
+        translator = Translator()
         # Si el usuario ingresa algún dato (ej. sun -sol, en inglés-), al hacer clic se deben desplegar las imágenes filtradas relacionadas a dicho valor.
-        images = getAllImages(search_msg)
+        translated_search_msg = translator.translate(search_msg).text
+        images = getAllImages(translated_search_msg)
         return render(request, 'home.html', {'images': images, 'favourites': favourite_list})
 
 
